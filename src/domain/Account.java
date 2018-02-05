@@ -29,10 +29,10 @@ public class Account {
 			this.transactions = new ArrayList<Transaction>();
 			generateNumber();
 	}
-	public String getAccountNUmber() {
+	public String getAccountNUmber() throws NullPointerException {
 		return this.accountNumber;
 	}
-	public double getBalance() {
+	public double getBalance() throws NullPointerException {
 		return this.balance;
 	}
 	private void addTransaction(Transaction transaction) {
@@ -83,7 +83,6 @@ public class Account {
 		}
 	}
 	public void deposit(String accountNumber, double amount, String description) throws NullPointerException {
-		LOGGER.log(Level.INFO, "Account number not correct or account from witch you wannt to deposit money not exsist");
 			if(chectIfAccountNumberIsCorrect(accountNumber)) {
 					Account temp = chceckIfAccountExist(accountNumber);
 					if(temp.addMoney(amount)) {

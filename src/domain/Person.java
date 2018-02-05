@@ -6,10 +6,7 @@ import java.util.*;
 import java.util.logging.*;
 
 public class Person {
-	
 	private static final Logger LOGGER = Logger.getLogger( Person.class.getName() );
-	
-	public static Person NOT_FOUND = new Person();
 	
 	private String firstName;
 	private String lastName;
@@ -17,38 +14,28 @@ public class Person {
 	public List<Account> accounts;
 	public List<Transaction> transactions;
 	
-	public Person(String firstName, String lastName, String day, String month, String year) throws ParseException, IllegalArgumentException, NullPointerException{
-		try {
+	public Person(String firstName, String lastName, String day, String month, String year){
 			this.setFirstName(firstName);
 			this.setLastName(lastName);
-			this.setBirthDate(day,month,year);
+			try {
+				this.setBirthDate(day,month,year);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			this.accounts = new ArrayList<Account>();
 			this.transactions = new ArrayList<Transaction>();
-		} catch (ParseException e) {
-			LOGGER.log( Level.SEVERE, e.toString(), e );
-			throw e;
-		} catch (IllegalArgumentException e) {
-			LOGGER.log( Level.SEVERE, e.toString(), e );
-			throw e;
-		} catch (NullPointerException e) {
-			LOGGER.log( Level.SEVERE, e.toString(), e );
-			throw e;
-		}
 	}
-	private Person() {
-		this.firstName = null;
-		this.lastName = null;
-		this.birthDate = null;
-		this.accounts = Collections.emptyList();
-		this.transactions = Collections.emptyList();
-	}
-	public String getFirstName(){
+	public String getFirstName() throws NullPointerException{
 		return this.firstName;
 	}
-	public String getLastName() {
+	public String getLastName() throws NullPointerException{
 		return this.lastName;
 	}
-	public Date getBirthDate() {
+	public Date getBirthDate() throws NullPointerException{
 		return this.birthDate;
 	}
 	void setFirstName(String firstName) throws IllegalArgumentException{
