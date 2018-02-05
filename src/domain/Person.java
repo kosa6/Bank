@@ -3,92 +3,108 @@ package domain;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.*;
 
 public class Person {
+	
+	private static final Logger LOGGER = Logger.getLogger( Person.class.getName() );
+	
+	public static Person NOT_FOUND = new Person();
+	
 	private String firstName;
 	private String lastName;
 	private Date birthDate;
-	List<Account> accounts;
-	List<Transaction> transactions;
+	public List<Account> accounts;
+	public List<Transaction> transactions;
 	
-	Person(String firstName, String lastName, String day, String month, String year){
-		this.setFirstName(firstName);
-		this.setLastName(lastName);
-		this.setBirthDate(day,month,year);
-		this.accounts = new ArrayList<Account>();
-		this.transactions = new ArrayList<Transaction>();
-	}
-	void setFirstName(String firstName){
+	public Person(String firstName, String lastName, String day, String month, String year) throws ParseException, IllegalArgumentException, NullPointerException{
 		try {
-			if(firstName != null && !firstName.isEmpty()) {
+			this.setFirstName(firstName);
+			this.setLastName(lastName);
+			this.setBirthDate(day,month,year);
+			this.accounts = new ArrayList<Account>();
+			this.transactions = new ArrayList<Transaction>();
+		} catch (ParseException e) {
+			LOGGER.log( Level.SEVERE, e.toString(), e );
+			throw e;
+		} catch (IllegalArgumentException e) {
+			LOGGER.log( Level.SEVERE, e.toString(), e );
+			throw e;
+		} catch (NullPointerException e) {
+			LOGGER.log( Level.SEVERE, e.toString(), e );
+			throw e;
+		}
+	}
+	private Person() {
+		this.firstName = null;
+		this.lastName = null;
+		this.birthDate = null;
+		this.accounts = Collections.emptyList();
+		this.transactions = Collections.emptyList();
+	}
+	public String getFirstName(){
+		return this.firstName;
+	}
+	public String getLastName() {
+		return this.lastName;
+	}
+	public Date getBirthDate() {
+		return this.birthDate;
+	}
+	void setFirstName(String firstName) throws IllegalArgumentException{
+			if(firstName != null && !firstName.isEmpty() && isNotNumber(firstName) == true) {
 				this.firstName = firstName;
 			}
 			else {
-				throw new Exception();
+				throw new IllegalArgumentException("First name is empty");
 			}
-		}
-		catch(NullPointerException e) {
-			System.out.println("First Name can't be null " + e.toString());
-		}
-		catch(Exception e) {
-			System.out.println("First Name can't be empty " + e.toString());
-		}
 	}
-	void setLastName(String lastName){
-		try {
-			if(lastName != null && !lastName.isEmpty()) {
+	void setLastName(String lastName) throws IllegalArgumentException{
+			if(lastName != null && !lastName.isEmpty() && isNotNumber(lastName) == true) {
 				this.lastName = lastName;
 			}
 			else {
-				throw new Exception();
+				throw new IllegalArgumentException("Last name is empty");
 			}
-		}
-		catch(NullPointerException e) {
-			System.out.println("Last Name can't be null " + e.toString());
-		}
-		catch(Exception e) {
-			System.out.println("Last Name can't be empty " + e.toString());
-		}
 	}
-	void setBirthDate(String month, String day, String year) {
+	private boolean isNotNumber(String s) {
+		try {
+			Double.parseDouble(s);
+		}
+		catch(NumberFormatException e) {
+			return true;
+		}
+		return false;
+	}
+	void setBirthDate(String month, String day, String year) throws IllegalArgumentException, ParseException {
 	    String pattern = "MM/dd/yyyy";
 	    SimpleDateFormat format = new SimpleDateFormat(pattern);
-	    try {
-		    int monthInt = Integer.parseInt(month);
-		    int dayInt = Integer.parseInt(day);
-		    int yearInt = Integer.parseInt(year);
-	    	if(monthInt>12 && dayInt> 31) {
-	    		throw new Exception();
-	    	}
-	      Date birthDate1 = format.parse(month+"/"+day+"/"+year);
-	      Date after = format.parse("01/01/1900");
-	      if(birthDate1.before(new Date()) && birthDate1.after(after)) {
-	    	  this.birthDate = birthDate1;
-	      }
-	      else {
-	    	  throw new Exception();
-	      }
-	      System.out.println(format.format( birthDate1));
-	    } catch(NullPointerException e){
-	    	System.out.println("String can't be null" + e.toString());
-	    }catch(NumberFormatException e) {
-	    	System.out.println("Can't convert string to int " + e.toString());
-	    }catch (ParseException e) {
-	    	System.out.println("Couldn't parse string, check if all string aren't empty");
-	        e.toString();
-	    }catch(Exception e) {
-	    	System.out.println("Date is incorect");
+		int monthInt = Integer.parseInt(month);
+		int dayInt = Integer.parseInt(day);
+	    if(monthInt > 12 || dayInt > 31) {
+	    	throw new IllegalArgumentException("Wrong day or month");
 	    }
-	    //System.out.println(format.format(new Date()));
+	    try {
+			Date birthDate1 = format.parse(month+"/"+day+"/"+year);
+			Date after = format.parse("01/01/1900");
+		    if(birthDate1.before(new Date()) && birthDate1.after(after)) {
+		    	  this.birthDate = birthDate1;
+		    }
+		    else {
+		    	  throw new IllegalArgumentException("Too old or to young");
+		    }
+	    }catch(ParseException e) {
+	    	throw e;
+	    }
 	}
-	void addAccount(Account account) {
+	void addAccount(Account account) throws IllegalArgumentException {
 		try {
-			
-		}catch(ClassNotFoundException e) {
-			
+			this.accounts.add(account);
+		} catch( NullPointerException e) {
+			LOGGER.log( Level.SEVERE, e.toString(), e );
 		}
 	}
-	public static void main(String[] args) {
-		Person das = new Person("Konrad","Sowisz","","","");
+	void addNewTransaction(Transaction transaction) {
+		this.transactions.add(transaction);
 	}
 }

@@ -1,0 +1,4 @@
+Transaction
+Date: Wed Jan 31 16:19:23 CET 2018
+Person: Jolo
+Title od transaction: Od ko
